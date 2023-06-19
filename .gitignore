@@ -1,6 +1,3 @@
-# Ignore everything in this folder
-*
-# Except this file
 
 node_modules/
 dist/

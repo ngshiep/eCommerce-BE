@@ -30,6 +30,7 @@ app.use(compression())
 app.get('/', (req, res, next) => {
   return res.status(200).json({
     message: 'Wellcome to eCommerce'
+    
   })
 })
 
