@@ -1,0 +1,3 @@
+### signup
+
+POST http://localhost:3056/v1/api/shop/signup
