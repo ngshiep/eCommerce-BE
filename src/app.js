@@ -1,3 +1,4 @@
+
 const express = require('express')
 const morgan = require('morgan')
 const helmet = require('helmet')
@@ -25,7 +26,7 @@ app.use(helmet())
 app.use(compression())
 
 //init db
-require('./dbs/init.mongodb.DP')
+require('./dbs/init.mongodb')
 const {checkOverload} = require('./helper/check.connect')
 checkOverload()
 
