@@ -12,16 +12,16 @@ var keyTokenSchema = new Schema(
   {
     user: {
       type: Schema.Types.ObjectId,
-      unique: true,
+      required: true,
       ref: 'Shop',
     },
     publicKey: {
       type: String,
-      unique: true,
+      required: true,
     },
     privateKey: {
       type: String,
-      unique: true,
+      required: true,
     },
     refreshTokens: {
       type: Array,
