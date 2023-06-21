@@ -15,6 +15,9 @@ const RolesShop = {
 };
 
 class AccessService {
+  static login = async ({ email,}) => {
+
+  }
   signUp = async ({ name, email, password }) => {
     try {
       // check email exists??
