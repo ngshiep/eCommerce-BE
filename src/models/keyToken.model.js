@@ -1,11 +1,11 @@
 // save user_id, publickey, uesed refresh token
-'use strict'
+"use strict";
 
 const mongoose = require("mongoose");
 const { model, Schema, Types } = require("mongoose"); // Erase if already required
 
-const DOCUMENT_NAME = 'Key'
-const COLLECTION_NAME = 'Keys'
+const DOCUMENT_NAME = "Key";
+const COLLECTION_NAME = "Keys";
 
 // Declare the Schema of the Mongo model
 var keyTokenSchema = new Schema(
@@ -13,7 +13,7 @@ var keyTokenSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: 'Shop',
+      ref: "Shop",
     },
     publicKey: {
       type: String,
@@ -23,10 +23,14 @@ var keyTokenSchema = new Schema(
       type: String,
       required: true,
     },
-    refreshTokens: {
+    refreshTokensUsed: {
       type: Array,
       default: [],
-    }
+    },
+    refreshToken: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,
@@ -36,4 +40,3 @@ var keyTokenSchema = new Schema(
 
 //Export the model
 module.exports = mongoose.model(DOCUMENT_NAME, keyTokenSchema);
-

@@ -5,7 +5,8 @@ const crypto = require("crypto");
 const KeyTokenService = require("./keyToken.service");
 const { createTokenPair } = require("../auth/auth.utils");
 const { getInfoDate } = require("../utils");
-const { BadRequestError } = require("../core/error.response");
+const { BadRequestError, AuthFailureError } = require("../core/error.response");
+const { findByEmail } = require("./shop.service");
 
 const RolesShop = {
   SHOP: "SHOP",
@@ -15,9 +16,52 @@ const RolesShop = {
 };
 
 class AccessService {
-  static login = async ({ email,}) => {
+  /*
+    - check email in db
+    - match password
+    - create AT and RT and save
+    - generate tokens
+    - get data to return login
+  */
+  login = async ({ email, password, refreshToken = null }) => {
+    const foundShop = await findByEmail({ email });
+    if (!foundShop) {
+      throw new BadRequestError("Shop not register");
+    }
+    
+    //compare password
+    const match = bcrypt.compare(password, foundShop.password);
+    if (!match) {
+      throw new AuthFailureError("Authentication Error");
+    }
 
-  }
+    //create token
+    //create privateKey, publickey.
+    const privateKey = crypto.randomBytes(64).toString("hex");
+    const publicKey = crypto.randomBytes(64).toString("hex");
+    //create new AT, RT
+    const tokens = await createTokenPair(
+      { userId: foundShop._id, email },
+      publicKey,
+      privateKey
+    );
+
+    await KeyTokenService.createKeyToken({
+      refreshToken: tokens.refreshToken,
+      userId: foundShop._id,
+      privateKey,
+      publicKey,
+    });
+
+    return {
+      shop: getInfoDate({
+        fileds: ["_id", "name", "email"],
+        object: foundShop,
+      }),
+      tokens,
+    };
+  };
+  
   signUp = async ({ name, email, password }) => {
     try {
       // check email exists??
@@ -36,7 +80,6 @@ class AccessService {
 
       if (newShop) {
         //create privateKey, publickey.
-
         const privateKey = crypto.randomBytes(64).toString("hex");
         const publicKey = crypto.randomBytes(64).toString("hex");
 
