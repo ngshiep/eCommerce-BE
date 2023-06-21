@@ -35,36 +35,28 @@ class AccessService {
 
       if (newShop) {
         //create privateKey, publickey.
-        const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
-          modulusLength: 4096,
-          publicKeyEncoding: {
-            type: "pkcs1",
-            format: "pem",
-          },
-          privateKeyEncoding: {
-            type: "pkcs1",
-            format: "pem",
-          },
-        });
-        // phải lấy public key từ mongodb. vì mongodb không thể lưu publickey chưa được hashed.
-        // khi lấy ra rồi phải chuyển ngược lại về public key object để cho giai đoạn tiếp theo,
-        const publicKeyString = await KeyTokenService.createKeyToken({
+
+        const privateKey = crypto.randomBytes(64).toString("hex");
+        const publicKey = crypto.randomBytes(64).toString("hex");
+        
+        //save publickey and private key to db
+        const keyStore = await KeyTokenService.createKeyToken({
           userId: newShop._id,
           publicKey,
+          privateKey
         });
 
-        if (!publicKeyString) {
+        if (!keyStore) {
           return {
             code: "xxx",
             message: "publicKeyString error",
           };
         }
 
-        const publicKeyObject = crypto.createPublicKey(publicKeyString);
         // create token pair
         const tokens = await createTokenPair(
           { userId: newShop._id, email },
-          publicKeyObject,
+          publicKey,
           privateKey
         );
 
