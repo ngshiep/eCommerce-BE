@@ -1,3 +1,9 @@
 ### signup
 
-POST http://localhost:3056/v1/api/shop/signup
+POST http://localhost:3052/v1/api/shop/signup
+Content-Type: application/json
+{
+  "name": "Shop Tips",
+  "email": "hiep01@gmail.com",
+  "password": "abc123"
+}
