@@ -16,6 +16,9 @@ const RolesShop = {
 };
 
 class AccessService {
+  logout = async ({ keyStore }) => {
+    return await KeyTokenService.deleteKeyTokenById( keyStore._id )
+  };
   /*
     - check email in db
     - match password
@@ -28,7 +31,7 @@ class AccessService {
     if (!foundShop) {
       throw new BadRequestError("Shop not register");
     }
-    
+
     //compare password
     const match = bcrypt.compare(password, foundShop.password);
     if (!match) {
@@ -61,7 +64,7 @@ class AccessService {
       tokens,
     };
   };
-  
+
   signUp = async ({ name, email, password }) => {
     try {
       // check email exists??
