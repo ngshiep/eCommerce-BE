@@ -1,12 +1,24 @@
-'use strict'
+"use strict";
 
-const express = require('express')
-const accessController = require('../../controllers/access.controller')
-const { asyncHandlerError } = require('../../middleware/handleError.middleware')
-const router = express.Router()
+const express = require("express");
+const accessController = require("../../controllers/access.controller");
+const {
+  asyncHandlerError,
+} = require("../../middleware/handleError.middleware");
+const { authentication } = require("../../auth/auth.utils");
+const router = express.Router();
 
 //sign up
-router.post('/shop/signup', asyncHandlerError(accessController.signUp))
-router.post('/shop/login', asyncHandlerError(accessController.login))
+router.post("/shop/signup", asyncHandlerError(accessController.signUp));
+router.post("/shop/login", asyncHandlerError(accessController.login));
 
-module.exports = router
+// authentication
+router.use(authentication);
+///////////////////////
+router.post("/shop/logout", asyncHandlerError(accessController.logout));
+router.post(
+  "/shop/handlerRefreshToken",
+  asyncHandlerError(accessController.handlerRefreshToken)
+);
+
+module.exports = router;

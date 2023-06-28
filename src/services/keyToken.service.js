@@ -1,9 +1,15 @@
 "use strict";
 
 const keyTokenModel = require("../models/keyToken.model");
+const { Types } = require("mongoose");
 
 class KeyTokenService {
-  static createKeyToken = async ({ userId, publicKey, privateKey, refreshToken }) => {
+  static createKeyToken = async ({
+    userId,
+    publicKey,
+    privateKey,
+    refreshToken,
+  }) => {
     try {
       //level 0
       // const tokens = await keyTokenModel.create({
@@ -28,10 +34,34 @@ class KeyTokenService {
         update,
         options
       );
-      return tokens? tokens.publicKey : null
+      return tokens ? tokens.publicKey : null;
     } catch (error) {
       return error;
     }
+  };
+
+  static deleteKeyTokenById = async (id) => {
+    return await keyTokenModel.deleteOne({ _id: id });
+  };
+
+  static findByUserId = async (userId) => {
+    return await keyTokenModel
+      .findOne({ user: new Types.ObjectId(userId) })
+      .lean();
+  };
+
+  static findByRefreshTokenUsed = async (refreshToken) => {
+    return await keyTokenModel
+      .findOne({ refreshTokensUsed: refreshToken })
+      .lean();
+  };
+
+  static findByRefreshToken = async (refreshToken) => {
+    return await keyTokenModel.findOne({ refreshToken });
+  };
+
+  static deleteKeyById = async (userId) => {
+    return await keyTokenModel.findByIdAndDelete({ user: userId }).lean();
   };
 }
 
