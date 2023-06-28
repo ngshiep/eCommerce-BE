@@ -57,3 +57,19 @@ module.exports = {
   clothing: model( 'Clothings', clothingSchema),
   electronic: model( 'Electronics', electronicSchema)
 }
+
+
+/**
+ * product_name: "new jean",
+    product_thumb: "high-quality denium jeans",
+    product_description: "",
+    product_price: 50,
+    product_quantity: "",
+    product_type: {
+      type: "",
+      required: "",
+      enum: ["Electronics", "Clothing", "Furniture"],
+    },
+    product_shop: "",
+    product_attributes: "",
+ */
