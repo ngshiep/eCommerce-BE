@@ -3,7 +3,7 @@ const shopModel = require("../models/shop.model");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const KeyTokenService = require("./keyToken.service");
-const { createTokenPair } = require("../auth/auth.utils");
+const { createTokenPair, verifyJWT } = require("../auth/auth.utils");
 const { getInfoDate } = require("../utils");
 const { BadRequestError, AuthFailureError } = require("../core/error.response");
 const { findByEmail } = require("./shop.service");
@@ -16,8 +16,62 @@ const RolesShop = {
 };
 
 class AccessService {
+  /*
+    check this token used?
+  */
+  handlerRefreshToken = async (refreshToken) => {
+    const foundToken = await KeyTokenService.findByRefreshTokenUsed(
+      refreshToken
+    );
+    if (foundToken) {
+      // decode xem do la thang nao?
+      const { userId, email } = await verifyJWT(
+        refreshToken,
+        foundToken.privateKey
+      );
+      // delete key
+      await KeyTokenService.deleteKeyById(userId);
+      throw new ForbiddenError("Something wrong happend !! Pls relogin");
+    }
+
+    const holderToken = await KeyTokenService.findByRefreshToken(refreshToken);
+    if (!holderToken) throw new AuthFailureError("Shop not registered1 ");
+
+    //verify token
+    const { userId, email } = await verifyJWT(
+      refreshToken,
+      holderToken.privateKey
+    );
+    //check user id
+
+    const foundShop = await findByEmail({ email });
+    if (!foundShop) throw new AuthFailureError("Shop not registered2 ");
+
+    //create một cặp mới.
+    const tokens = await createTokenPair(
+      { userId, email },
+      holderToken.publicKey,
+      holderToken.privateKey
+    );
+
+    //update token
+    const newToke = await holderToken.updateOne({
+      $set: {
+        refreshToken: tokens.refreshToken,
+      },
+      $addToSet: {
+        refreshTokensUsed: refreshToken, // add vào thêm các token mới
+      },
+    });
+    console.log(newToke);
+    return {
+      user: { userId, email },
+      tokens,
+    };
+  };
+
   logout = async ({ keyStore }) => {
-    return await KeyTokenService.deleteKeyTokenById( keyStore._id )
+    return await KeyTokenService.deleteKeyTokenById(keyStore._id);
   };
   /*
     - check email in db
