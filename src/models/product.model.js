@@ -15,7 +15,7 @@ const productSchema = new Schema(
     product_type: {
       type: String,
       required: true,
-      enum: ["Electronics", "Clothing", "Furniture"],
+      enum: ["Electronics", "Clothings", "Furniture"],
     },
     product_shop: { type: Schema.Types.ObjectId, required: true },
     product_attributes: { type: Schema.Types.Mixed, required: true },

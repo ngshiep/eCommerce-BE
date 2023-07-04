@@ -17,9 +17,6 @@ const apiKey = async (req, res, next) => {
     // check obj key in db
 
     const objKey = await findApiById(key)
-    console.log('====================================');
-    console.log(objKey);
-    console.log('====================================');
 
     if (!objKey) {
       return res.status(403).json({

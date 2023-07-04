@@ -5,11 +5,11 @@ const productController = require("../../controllers/product.controller");
 const {
   asyncHandlerError,
 } = require("../../middleware/handleError.middleware");
-const { authentication } = require("../../auth/auth.utils");
+const { authentication, authenticationV2 } = require("../../auth/auth.utils");
 const router = express.Router();
 
 // authentication
-router.use(authentication);
+router.use(authenticationV2);
 ///////////////////////
 
 router.post("", asyncHandlerError(productController.createProduct));
