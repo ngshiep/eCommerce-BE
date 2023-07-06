@@ -19,6 +19,7 @@ const productSchema = new Schema(
     },
     product_shop: { type: Schema.Types.ObjectId, required: true },
     product_attributes: { type: Schema.Types.Mixed, required: true },
+    
   },
   {
     timestamps: true,
